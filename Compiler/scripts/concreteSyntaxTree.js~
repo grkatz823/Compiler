@@ -1,0 +1,46 @@
+function concreteSyntaxTree(root){
+	this.currentParent = null
+	this.root = root;
+	this.toString(
+}
+
+function concreteNode(identifier,parent, children, scope){
+	this.identifier = identifier;
+	this.parent = parent;
+	this.children = children;
+	this.scope = scope;
+	this.toString = function(){
+				if(this.children.length > 0){
+					var childIndices = new Array();
+					var i = 0;
+					while (i < this.children.length){
+						childIndices[i] = getScopeNumber(this.children[i]);
+						i++;
+					}
+					return identifier + ": " + scope + ", Parent(" + parent + ")" + ", Children(" + childIndices + ")";
+				}else{
+					return identifier + ": " + scope + ", Parent(" + parent + ")" + ", Children( no children )";
+				}
+			       }
+
+}
+function isRoot(tree){
+	if (tree.parent == null){
+		return true;
+	}
+	return false;
+}
+
+function addBranch(tree,node){
+//	var newNode
+	if (tree.root == null){
+		tree.root = node;
+	} else {
+		addChild(tree.currentParent,node);
+		setParent(node,tree.currentParent);
+		tree.currentParent = node;
+		
+	}
+	
+		
+}

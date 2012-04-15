@@ -1,0 +1,120 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Team PGP Compiler</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <link rel="stylesheet" type="text/css" href="compiler.css" />
+</head>
+<body onload="init();">
+    <h1>Team PGP Compiler Project</h1>
+    <p>
+        . . . <em>a simple parser for a simple grammar</em>:
+    </p>
+    <pre>
+Program       ::== S
+Statement     ::== print(Expr)|Id = Expr | VarDecl | {SList}
+SList         ::== Statement SList | ε
+Expr	      ::== IntExpr | CharExpr | Id
+IntExpr       ::== Digit Op Expr | Digit
+CharExpr      ::== "CharList"
+CharList      ::== Char CharList | Space CharList | ε
+VarDecl       ::== Type Id
+Type          ::== <b>int | char </b>
+Space	      ::== <i>the <b>space</b> character </i>
+Id            ::== Char
+Digit         ::== <b>1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 0 </b>
+Op            ::== <b>+ | - </b>
+Char          ::== <b>a | b | c ... z </b>
+    </pre>
+    <div>
+        <img style="float:right;" src="images/FailError.jpg" alt="Fail Error" />
+    </div>    
+    <div>
+        <textarea id="taSourceCode" cols="50" rows="5"></textarea>
+        <br>
+        <input type="button" id="btnCompile" value="END THE WORLD" onclick="btnCompile_click();"/>
+        <br>
+        <textarea id="taOutput" cols="50" rows="23"></textarea>
+    </div>
+    <!-- Footer -->
+    <p>
+        <a href="http://validator.w3.org/check?uri=referer">
+            <img src="images/w3cvalidhtml5.jpg" alt="Valid HTML5" width="88" height="31" />
+        </a>
+    </p>
+    <!-- Client-side code down here, per the YSlow advice. 
+    // (http://developer.yahoo.com/performance/rules.html#js_bottom) -->
+    <script type="text/javascript" src="scripts/utils.js"></script>	
+    <script type="text/javascript" src="scripts/lex.js"></script>
+    <script type="text/javascript" src="scripts/parse.js"></script>
+    <script type="text/javascript" src="scripts/tokenClass.js"></script>
+    <script type="text/javascript">
+
+    // Global variables
+    var currentToken = "";
+    var currentType = "";
+    var EOF = "$";
+    var errorCount = 0;
+    var errorIndex = -1;
+    var errorIndexString = "";
+    var inCharList = false;
+    var inIntExpr = false;
+    var scope = 0;
+    var symbolTable = new symbolTableFactory();
+    var tokenArray = new Array();
+    var tokenIndex = 0;
+    var tokens = "";
+    var typeMatch = "";
+    var usedIds = new Array();
+    var unusedIds = new Array();
+    var warningFlag = false;
+    var warningIndex = new Array();
+
+    function init()
+    {
+        // Clear the message box.
+        document.getElementById("taOutput").value = "";
+
+        // Set the initial values for our globals.
+        currentToken = ' ';
+	currentType = ' ';
+        errorCount = 0;        
+	errorIndex = -1;
+	errorIndexString = "";
+        inCharList = false;
+    	inIntExpr = false;
+	scope = 0;
+	symbolTable = new symbolTableFactory();
+	tokenArray = new Array();
+        tokenIndex = 0;
+        tokens = "";
+	typeMatch = "";
+	unusedIds = new Array();
+	usedIds = new Array();
+	warningFlag = false;
+	warningIndex = new Array();
+    }
+    
+    function btnCompile_click()
+    {        
+        // This is executed as a result of the usr pressing the 
+        // "compile" button between the two text areas, above.  
+        // Note the <input> element's event handler: onclick="btnCompile_click();
+        init();
+        putMessage("Compilation Started");
+        // Grab the tokens from the lexer . . .
+        tokens = lex();
+        putMessage("Lex produced [" + tokenArray + "]");
+        // . . . and parse!
+        parse();
+    }
+    
+    function putMessage(msg)
+    {
+        document.getElementById("taOutput").value += msg + "\n";
+    }
+    
+
+    </script>
+</body>
+</html>
